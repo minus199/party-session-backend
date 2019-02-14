@@ -7,7 +7,7 @@ const path = require("path");
 
 const app = express();
 app.use(commonMW);
-app.use(express.static(path.join(__dirname, process.argv[2] || "./pubic")));
+app.use(express.static(path.join(__dirname, process.argv[2] || "../party-session-app")));
 app.use([sessionMgmtMW, sessionCounterMW]);
 
 const wsRef = require("express-ws")(app);
