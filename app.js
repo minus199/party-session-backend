@@ -1,8 +1,13 @@
 const express = require("express");
 
 const commonMW = require("./middlewares/default-mw");
-const { sessionCounterMW, sessionMgmtMW } = require("./middlewares/sessions");
-const { authBySession } = require("./middlewares/auth-mw");
+const {
+    sessionCounterMW,
+    sessionMgmtMW
+} = require("./middlewares/sessions");
+const {
+    authBySession
+} = require("./middlewares/auth-mw");
 const path = require("path");
 
 const app = express();
@@ -20,6 +25,6 @@ app.use("/", homepageRouter);
 app.use("/users", authBySession, usersRouter);
 app.use("/me", authBySession, meRouter);
 
-app.listen(3000);
+app.listen(3000, () => console.log(`PartyServer is connected at port 3000`));
 
 module.exports = app;

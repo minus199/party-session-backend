@@ -1,2 +1,4 @@
 node_modules/
 sessions/
+.vscode
+launch.json
