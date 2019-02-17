@@ -1,32 +1,51 @@
-const { Router } = require("express");
-const router = Router();
+const router = require("express").Router();
+const OnlineUsers = require("../entities/online-users");
+const OutgoingSocketEvent = require("../entities/outgoing-socket-event");
+const IncomingSocketEvent = require("../entities/incoming-socket-event");
 
-const WsClient = require("../entities/ws-client");
-const SocketEvent = require("../entities/socket-event");
+const recentEvents = [];
+const addEventToHistory = e => {
+	if (e.type !== "USER_NEW_MSG") return;
+	recentEvents.push(e);
+	if (recentEvents.length > 100) {
+		recentEvents.shift();
+		// keeps the history at the size of 100 max items -- otherwise, it'll cause memory leaks overtime
+	}
+}
 
-let clients = {};
+const onlineUsers = new OnlineUsers("party");
+onlineUsers.on(OnlineUsers.Events.USER_ONLINE, e => {
+	onlineUsers.dispatchOverWs(e); // TODO: Noly send event to the relevant users
+});
 
-const getConnected = () => Object.entries(clients).map(([cn, c]) => c.user.username);
+onlineUsers.on(OnlineUsers.Events.USER_OFFLINE, e => {
+	onlineUsers.dispatchOverWs(e);
+});
 
+//TODO: Save messages history on cloud
 router.ws("/party", function (ws, req) {
-  //TODO: What if is the user already connected?(in same or another tab/window/device)
+	const currentClient = onlineUsers.connect(req, ws);
+	new OutgoingSocketEvent(currentClient, OutgoingSocketEvent.Events.RECENT_MESSAGE, recentEvents.map(e => e.data)).dispatch()
 
-  const currentClient = new WsClient(req.currentUser, ws);
+	ws.on("message", rawPayload => {
+		try {
+			const incoming = new IncomingSocketEvent(rawPayload);
+			const se = new OutgoingSocketEvent(currentClient, incoming.type, incoming.payload);
+			onlineUsers.dispatchOverWs(se);
+			addEventToHistory(se);
+			//TODO: Only send the event to the relevant user(for example, the user that is typing should not be notified about it)
+		} catch (e) {
+			console.error("Error over socket", e);
+		}
+	});
 
-  clients[currentClient.username] = currentClient;
-  const se = new SocketEvent(currentClient, SocketEvent.Events.USER_ONLINE, { connected: getConnected() });
-  Object.entries(clients).forEach(([cname, c]) => {
-    se.dispatch(c);
-  });
-
-  ws.on("message", function (msg) {
-    const se = new SocketEvent(currentClient, SocketEvent.Events.INCOMING_MSG, { msg });
-    Object.entries(clients).forEach(([cname, c]) => {
-      se.dispatch(c);
-    });
-  });
-
-  ws.on("close", () => { delete clients[currentClient.username] })
+	ws.on("close", () => {
+		try {
+			onlineUsers.disconnect(currentClient.username);
+		} catch (e) {
+			console.error(e);
+		}
+	});
 });
 
 module.exports = router;
