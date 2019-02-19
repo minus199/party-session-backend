@@ -1,6 +1,7 @@
 const users = {
   asaf: "72b2f5893cbf66a719ff3ba9bf032954", // no guessing
   foo: "3858f62230ac3c915f300c664312c63f",
+  oof: "3858f62230ac3c915f300c664312c63f",
   adihason: '9f6f24eb2ac014601dc521ea73fc159d',
   azamos: '5d531dcdc468e151f172361a83ef9538',
   danielknut: 'ae01994e824d89d512a7fe4f20c59510',

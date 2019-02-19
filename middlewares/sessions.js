@@ -1,17 +1,12 @@
-const UUID = require("uuid/v4");
 const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 // session mgmt mw
 
 const sessionMgmtMW = session({
-  genid: req => {
-    console.log(`Generating session ID for req.sessionID ${req.sessionID}`);
-    return UUID(); // use UUIDs for session IDs
-  },
   store: new FileStore({
     path: "./sessions"
   }),
-  saveUninitialized: false,
+  saveUninitialized: true,
   resave: false,
   cookie: { sameSite: true },
   secret: "secret_top_cat"
