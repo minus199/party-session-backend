@@ -19,10 +19,12 @@ const wsRef = require("express-ws")(app);
 app.use("/ws", authBySession, require("./routes/websockets"));
 
 const homepageRouter = require("./routes/homepage");
-const usersRouter = require("./routes/users");
-const meRouter = require("./routes/me");
 app.use("/", homepageRouter);
+
+const usersRouter = require("./routes/users");
 app.use("/users", authBySession, usersRouter);
+
+const meRouter = require("./routes/me");
 app.use("/me", authBySession, meRouter);
 
 app.listen(3000, () => console.log(`PartyServer is connected at port 3000`));

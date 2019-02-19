@@ -4,13 +4,10 @@ class OutgoingSocketEvent extends SocketEvent {
   constructor(client, type, payload) {
     super(client, type, payload);
   }
-}
 
-OutgoingSocketEvent.Events = Object.freeze({
-  USER_ONLINE: "USER_ONLINE",
-  USER_OFFLINE: "USER_OFFLINE",
-  INCOMING_MSG: "INCOMING_MSG",
-  RECENT_MESSAGE: "RECENT_MESSAGE" 
-});
+  static fromIncoming(ise) {
+    return new OutgoingSocketEvent(ise.client, ise.type, ise.payload);
+  }
+}
 
 module.exports = OutgoingSocketEvent;

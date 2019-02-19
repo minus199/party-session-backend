@@ -2,6 +2,9 @@ const connectedUsers = {};
 const Emitter = require("events");
 const OnlineUser = require("./online-user");
 const OnlineUsersEvent = require("./online-users-event");
+const {
+    SocketEvent
+} = require("./socket-events");
 
 class OnlineUsers extends Emitter {
     constructor(topic) {
@@ -40,8 +43,11 @@ class OnlineUsers extends Emitter {
         this.emit(OnlineUsers.Events.USER_OFFLINE, new this.BoundUserEvent(currentClient, OnlineUsers.Events.USER_OFFLINE));
     }
 
-    dispatchOverWs(socketEvent) {
-        Object.entries(connectedUsers[this.topic]).forEach(([cname, c]) => socketEvent.dispatch(c));
+    dispatchOverWs(socketEvent, ...exclude) {
+        Object.entries(connectedUsers[this.topic]).forEach(([cname, c]) => {
+            if (exclude.includes(cname)) return;
+            socketEvent.dispatch(c)
+        });
     }
 }
 
