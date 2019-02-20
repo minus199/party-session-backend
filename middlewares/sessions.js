@@ -6,9 +6,8 @@ const sessionMgmtMW = session({
   store: new FileStore({
     path: "./sessions"
   }),
-  saveUninitialized: true,
+  saveUninitialized: false,
   resave: false,
-  cookie: { sameSite: true },
   secret: "secret_top_cat"
 });
 

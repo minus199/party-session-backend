@@ -4,7 +4,9 @@ const authMW = require("../middlewares/auth-mw");
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
-  res.render("index", { title: "Express" });
+  res.render("index", {
+    title: "Express"
+  });
 });
 
 router.post("/login", authMW.fullAuth, (req, res) => {
@@ -14,6 +16,11 @@ router.post("/login", authMW.fullAuth, (req, res) => {
     view: req.session.numOfView,
     expiresIn: req.session.cookie.maxAge / 1000
   });
+});
+
+router.post("/logout", authMW.authBySession, (req, res) => {
+  req.session.destroy();
+  res.json({isLoggedIn: false});
 });
 
 // dump session data to client
