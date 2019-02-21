@@ -2,9 +2,6 @@ const connectedUsers = {};
 const Emitter = require("events");
 const OnlineUser = require("./online-user");
 const OnlineUsersEvent = require("./online-users-event");
-const {
-    SocketEvent
-} = require("./socket-events");
 
 class OnlineUsers extends Emitter {
     constructor(topic) {

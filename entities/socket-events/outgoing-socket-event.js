@@ -1,12 +1,12 @@
 const SocketEvent = require("./socket-event");
 
 class OutgoingSocketEvent extends SocketEvent {
-  constructor(client, type, payload) {
-    super(client, type, payload);
+  constructor(onlineUser, type, payload) {
+    super(onlineUser, type, payload);
   }
 
   static fromIncoming(ise) {
-    return new OutgoingSocketEvent(ise.client, ise.type, ise.payload);
+    return new OutgoingSocketEvent(ise.user, ise.type, ise.payload);
   }
 }
 

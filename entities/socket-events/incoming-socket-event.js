@@ -1,8 +1,8 @@
 const SocketEvent = require("./socket-event");
 class IncomingSocketEvent extends SocketEvent{
-    constructor(currentClient, rawPayload) {
+    constructor(onlineUser, rawPayload) {
         const payload = JSON.parse(rawPayload);
-        super(currentClient, payload.type, payload.content);
+        super(onlineUser, payload.type, payload.content);
     }
 }
 
