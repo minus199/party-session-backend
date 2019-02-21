@@ -8,7 +8,11 @@ const sessionMgmtMW = session({
   }),
   saveUninitialized: false,
   resave: false,
-  secret: "secret_top_cat"
+  secret: "secret_top_cat",
+  cookie: {
+    httpOnly: true, // this prevent us from being able to access the cookie with javascript. set false, and document.cookie will not be an empty string. see the session file
+    maxAge: 24 * 60 * 60 * 1000
+  }
 });
 
 // views count mw
@@ -21,4 +25,7 @@ const sessionCounterMW = (req, res, next) => {
   next();
 };
 
-module.exports = { sessionMgmtMW, sessionCounterMW };
+module.exports = {
+  sessionMgmtMW,
+  sessionCounterMW
+};
